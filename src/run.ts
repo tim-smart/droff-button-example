@@ -1,16 +1,23 @@
 require("dotenv").config();
 
 import { createClient, Intents } from "droff";
+import * as Interactions from "droff-interactions";
+import * as Rx from "rxjs";
 import * as Grid from "./commands/grid";
 
 const client = createClient({
   token: process.env.DISCORD_BOT_TOKEN!,
-  intents: Intents.GUILDS,
+  gateway: {
+    intents: Intents.GUILDS,
+  },
 });
 
-const commands = client.useSlashCommands();
+const commands = Interactions.create(client);
 
-// Register commands
-Grid.register(commands);
+Rx.merge(
+  client.effects$,
+  commands.effects$,
 
-commands.start();
+  // Add commands
+  Grid.register(commands)
+).subscribe();
