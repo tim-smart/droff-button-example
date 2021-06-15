@@ -15,6 +15,7 @@ const client = createClient({
 const commands = Interactions.create(client);
 
 Rx.merge(
+  // Start client and command sync
   client.effects$,
   commands.effects$,
 
